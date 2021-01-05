@@ -1,7 +1,6 @@
 from Util import File, Plotter
 from Main import Main
 from RedNeuronal.Data import Data
-from RedNeuronal.Model import Model
 from AlgoritmoGenetico.Genetico import Genetico
 from Main import Main
 
@@ -38,7 +37,7 @@ train_set = Data(train_x, train_y)
 valid_set = Data(valid_x, valid_y)
 test_set = Data(test_x, test_y)
 
-capas = [train_set.n, 10, 5, 4, 1]
+capas = [train_set.n, 9, 5, 4, 1]
 #capas = [train_set.n, 6, 8, 4, 1]
 alpha = Hp['alpha']
 lambd = Hp['lambda']
@@ -53,8 +52,8 @@ for mejor in mejores:
 
 Plotter.show_Model(modelos)
 
-with open("modelo.pickle", "wb") as f:
-    pickle.dump(mejores[0].modelo, f)
+#with open("modelo.pickle", "wb") as f:
+    #pickle.dump(mejores[0].modelo, f)
 
 #load = None
 #with open("modelo.pickle", "rb") as f:

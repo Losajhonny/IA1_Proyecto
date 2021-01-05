@@ -34,7 +34,8 @@ export class AppComponent {
     }
 
     async consultar() {
-        const res = (await Conexion.getInstance().POST('consultar', { data: this.data }))
-        console.log(res)
+        const res = (await Conexion.getInstance().POST('consultar', { data: this.data })).data
+        const aux = "Probabilidad que el estudiante se cambie de carrera es de: " + res
+        alert(aux)
     }
 }
