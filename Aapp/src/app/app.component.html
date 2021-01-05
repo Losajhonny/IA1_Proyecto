@@ -1,0 +1,51 @@
+<div class="wrapper bg-dark">
+    <div class="container">
+        <h1 class="text-center">Escuela de Ciencias y Sistemas</h1>
+        <div class="form">
+            <h5 class="text-center my-4">Ingrese los datos generales del aspirante</h5>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="in1">Genero</label>
+                    <select id="in1" class="form-control" [(ngModel)]="data.genero">
+                        <option [value]="1">Masculino</option>
+                        <option [value]="0">Femenino</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="in2">Edad</label>
+                    <input type="number" class="form-control" [(ngModel)]="data.edad">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="in2">Año de Inscripción</label>
+                    <input type="number" class="form-control" [(ngModel)]="data.anio">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="in3">Departamento</label>
+                    <select id="in3" class="form-control" [(ngModel)]="data.depto" (change)="loadMuni($event.target.value)">
+                        <option [value]="-1" selected>Choose...</option>
+                        <option *ngFor="let depto of deptos" [value]="depto.cod">{{ depto.name }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="in4">Municipio</label>
+                    <select id="in4" class="form-control" [(ngModel)]="data.municipio">
+                        <option [value]="-1" selected>Choose...</option>
+                        <option *ngFor="let muni of municipios" [value]="muni.cod">{{ muni.name }}</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                </div>
+            </div>
+
+            <button class="btn btn-success" (click)="consultar()">Consultar</button>
+        </div>
+
+    </div>
+</div>
