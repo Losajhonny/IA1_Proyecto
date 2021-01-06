@@ -52,8 +52,8 @@ for mejor in mejores:
 
 Plotter.show_Model(modelos)
 
-#with open("modelo.pickle", "wb") as f:
-    #pickle.dump(mejores[0].modelo, f)
+with open("modelo1.pickle", "wb") as f:
+    pickle.dump(mejores[0].modelo, f)
 
 #load = None
 #with open("modelo.pickle", "rb") as f:
