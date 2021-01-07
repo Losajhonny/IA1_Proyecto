@@ -1,145 +1,172 @@
 import numpy as np
+#np.set_printoptions(threshold=100000) #Esto es para que al imprimir un arreglo no me muestre puntos suspensivos
 
+class RModel:
 
-class RModelo:
-    def __init__(self, train_set, capas, alpha=0.3, iterations=300000, lambd=0, keep_prob=1):
+    def __init__(self, train_set, layers, alpha=0.3, iterations=300000, lambd=0, keep_prob=1):
         self.data = train_set
         self.alpha = alpha
         self.max_iteration = iterations
         self.lambd = lambd
         self.kp = keep_prob
-        self.parametros = self.Inicializar(capas)
+        self.layers = layers
+        # Se inicializan los pesos
+        self.parametros = self.Inicializar(layers)
 
-    # retorna una lista de listas de parametros
     def Inicializar(self, layers):
         parametros = {}
         L = len(layers)
-        print('layers:', layers)
+        #print('layers:', layers)
         for l in range(1, L):
-            # np.random.randn(layers[l], layers[l-1])
-            # Crea un arreglo que tiene layers[l] arreglos, donde cada uno de estos arreglos tiene layers[l-1] elementos con valores aleatorios
-            # np.sqrt(layers[l-1] se saca la raiz cuadrada positiva de la capa anterior ---> layers[l-1]
+            #np.random.randn(layers[l], layers[l-1])
+            #Crea un arreglo que tiene layers[l] arreglos, donde cada uno de estos arreglos tiene layers[l-1] elementos con valores aleatorios
+            #np.sqrt(layers[l-1] se saca la raiz cuadrada positiva de la capa anterior ---> layers[l-1]
+            
+            #sqr = np.sqrt(layers[l-1])
+            #ran = np.random.randn(layers[l], layers[l-1])
+            #zer = np.zeros((layers[l], 1))
+            #sqr = np.sqrt(layers[l-1])
+            parametros['W'+str(l)] = np.random.randn(layers[l], layers[l-1]) / np.sqrt(layers[l-1])
+            parametros['b'+str(l)] = np.zeros((layers[l], 1))
 
-            # Almaceno en diccionario de diccionarios
-            parametros['W' + str(l)] = np.random.randn(layers[l], layers[l - 1]) / np.sqrt(layers[l - 1])
-            parametros['b' + str(l)] = np.zeros((layers[l], 1))
-            # print(layers[l], layers[l-1], np.random.randn(layers[l], layers[l-1]))
-            # print(np.sqrt(layers[l-1]))
-            # print(np.random.randn(layers[l], layers[l-1]) / np.sqrt(layers[l-1]))
-
-        return parametros  # retorna un json con los valores de w y b
+            #print(layers[l], layers[l-1], np.random.randn(layers[l], layers[l-1]))
+            #print(np.sqrt(layers[l-1]))
+            #print(np.random.randn(layers[l], layers[l-1]) / np.sqrt(layers[l-1]))
+        return parametros
 
     def training(self, show_cost=False):
         self.bitacora = []
         for i in range(0, self.max_iteration):
             y_hat, temp = self.propagacion_adelante(self.data)
             cost = self.cost_function(y_hat)
-            gradientes = self.propagacion_atras(temp)  # se le envia un diccionario
+            gradientes = self.propagacion_atras(temp)
             self.actualizar_parametros(gradientes)
             if i % 50 == 0:
                 self.bitacora.append(cost)
                 if show_cost:
                     print('Iteracion No.', i, 'Costo:', cost, sep=' ')
 
+
+    """
     def propagacion_adelante(self, dataSet):
         # Se extraen las entradas
         X = dataSet.x
-        temp = {}  # contiene todos los : Z, A, D
-        No_pesos = len(self.parametros) // 2
-        A = None
-        Z = None
-        D = None
-        aux = 0
-        for i in range(1, No_pesos):
-            aux = i
-            Wn = self.parametros['W' + str(i)]
-            bn = self.parametros['b' + str(i)]
 
-            if i == 1:  # primera capa
-                Z = np.dot(Wn, X) + bn
+        Zi = None
+        Ai = None
+        Di = None
+
+        for i in range(1, len(self.layers) - 1):
+            Wi = self.parametros['W' + str(i)]
+            bi = self.parametros['b' + str(i)]
+            Zi = np.dot(Wi, X) + bi
+            X = Ai = self.activation_function('relu', Zi)
+            #Se aplica el Dropout Invertido
+            D2 = np.random.rand(Ai.shape[0], X.shape[1])
+    """
+
+    
+    def propagacion_adelante(self, dataSet):
+        # Recorrer capas
+        L = len(self.layers)
+        X = dataSet.x
+
+        Wn, bn = self.dicWB()
+        temp = {}
+
+        for i in range(1, L):
+            Wi = Wn['W' + str(i)]
+            bi = bn['b' + str(i)]
+            Ai = 0
+            Di = 0
+            Zi = 0
+
+            # si el ultimo activar por sigmoide
+            if i == (L-1):
+                Zi = np.dot(Wi, X) + bi
+                Ai = self.activation_function('sigmoide', Zi)
+            # sino activar relu y aplicar el dropout invertido
             else:
-                Z = np.dot(Wn, A) + bn
+                Zi = np.dot(Wi, X) + bi
+                Ai = self.activation_function('relu', Zi)
+                if i == 1:
+                    Di = np.random.rand(Ai.shape[0], Ai.shape[1])
+                else:
+                    Di = np.random.rand(Ai.shape[0], X.shape[1])
+                Di = (Di < self.kp).astype(int)
+                Ai *= Di
+                Ai /= self.kp
+            
+            X = Ai
+            temp['Z' + str(i)] = Zi
+            temp['A' + str(i)] = Ai
+            temp['D' + str(i)] = Di
 
-            A = self.activation_function('relu', Z)
-            # Se aplica el Dropout Invertido
-            D = np.random.rand(A.shape[0], A.shape[1])
-            D = (D < self.kp).astype(int)
-            A *= D
-            A /= self.kp
-            temp['Z' + str(i)] = Z
-            temp['A' + str(i)] = A
-            temp['D' + str(i)] = D
+        return X, temp
+    
 
-        # ULTIMA CAPA
-        # Aca ya llegue al ultimo peso es por eso que en el for  el limite esta en ( No_pesos - 1)
-        Wn = self.parametros['W' + str(aux + 1)]
-        bn = self.parametros['b' + str(aux + 1)]
-        Z = np.dot(Wn, A) + bn
-        A = self.activation_function('sigmoide', Z)
-        temp['Z' + str(aux + 1)] = Z
-        temp['A' + str(aux + 1)] = A
-        return A, temp
+    def dicWB(self):
+        L = len(self.layers)
+        Wn = {}
+        bn = {}
+
+        for i in range(1, L):
+            Wn['W' + str(i)] = self.parametros['W' + str(i)]
+            bn['b' + str(i)] = self.parametros['b' + str(i)]
+
+        return Wn, bn
 
     def propagacion_atras(self, temp):
+        L = i = len(self.layers) - 1
+
         # Se obtienen los datos
         m = self.data.m
         Y = self.data.y
         X = self.data.x
 
-        No_capas = len(self.parametros) // 2
-        dZn = None
-        Wn_anterior = None
+        Wn, bn = self.dicWB()
         gradientes = {}
 
-        while (No_capas != 1):
+        Wiant = 0
+        dZiant = 0
+        
+        while i >= 1:
+            Wi = Wn['W' + str(i)]
+            bi = bn['b' + str(i)]
+            Ai = temp['A' + str(i)]
+            Di = temp['D' + str(i)]
+            Aij = 0
+            dAi = 0
+            dZi = 0
+            dWi = 0
 
-            A_anterior = temp["A" + str(No_capas - 1)]
-            An = temp["A" + str(No_capas)]
-            Wn_actual = self.parametros["W" + str(No_capas)]
-
-            if No_capas == (len(self.parametros) // 2):  # es la ultima capa
-                dZn = An - Y
-                dWn = (1 / m) * np.dot(dZn, A_anterior.T) + (self.lambd / m) * Wn_actual
-                dbn = (1 / m) * np.sum(dZn, axis=1, keepdims=True)
-                gradientes["dZ" + str(No_capas)] = dZn
-                gradientes["dW" + str(No_capas)] = dWn
-                gradientes["db" + str(No_capas)] = dbn
+            if i == L:
+                dZi = Ai - Y
             else:
-                dAn = np.dot(Wn_anterior.T, dZn)
-                dn = temp["D" + str(No_capas)]
-                dAn *= dn
-                dZn = np.multiply(dAn, np.int64(An > 0))
+                dAi = np.dot(Wiant.T, dZiant)
+                dAi *= Di
+                dAi /= self.kp
+                dZi= np.multiply(dAi, np.int64(Ai > 0))
 
-                dWn = 1. / m * np.dot(dZn, A_anterior.T) + (self.lambd / m) * Wn_actual
-                dbn = 1. / m * np.sum(dZn, axis=1, keepdims=True)
+            if i == 1:
+                dWi = (1 / m) * np.dot(dZi, X.T) + (self.lambd / m) * Wi
+            else:
+                Aij = temp['A' + str(i - 1)]
+                dWi = (1 / m) * np.dot(dZi, Aij.T) + (self.lambd / m) * Wi
+            
+            dbi = (1 / m) * np.sum(dZi, axis=1, keepdims=True)
+            Wiant = Wi
+            dZiant = dZi
 
-                gradientes["dA" + str(No_capas)] = dAn
-                gradientes["dZ" + str(No_capas)] = dZn
-                gradientes["dW" + str(No_capas)] = dWn
-                gradientes["db" + str(No_capas)] = dbn
+            if i != L:
+                gradientes['dA' + str(i)] = dAi
 
-            Wn_anterior = self.parametros[
-                "W" + str(No_capas)]  # de esta manera me aseguro de poder trabajar con un Wn anterior
+            gradientes['dZ' + str(i)] = dZi
+            gradientes['dW' + str(i)] = dWi
+            gradientes['db' + str(i)] = dbi
 
-            No_capas -= 1
-
-        # Cuando llegue aca es porque estoy en la primera capa
-        An = temp["A" + str(No_capas)]
-        Wn_actual = self.parametros["W" + str(No_capas)]
-
-        dAn = np.dot(Wn_anterior.T, dZn)
-        dn = temp["D" + str(No_capas)]
-        dAn *= dn
-        dAn /= self.kp
-        dZn = np.multiply(dAn, np.int64(An > 0))
-        dWn = 1. / m * np.dot(dZn, X.T) + (self.lambd / m) * Wn_actual
-        db = 1. / m * np.sum(dZn, axis=1, keepdims=True)
-
-        gradientes["dA" + str(No_capas)] = dAn
-        gradientes["dZ" + str(No_capas)] = dZn
-        gradientes["dW" + str(No_capas)] = dWn
-        gradientes["db" + str(No_capas)] = db
-
+            i -= 1
+            
         return gradientes
 
     def actualizar_parametros(self, grad):
@@ -162,31 +189,32 @@ class RModelo:
             suma = 0
             for i in range(L):
                 suma += np.sum(np.square(self.parametros["W" + str(i + 1)]))
-            result += (self.lambd / (2 * m)) * suma
+            result += (self.lambd/(2*m)) * suma
         return result
 
     def predict(self, dataSet):
         # Se obtienen los datos
         m = dataSet.m
         Y = dataSet.y
-        p = np.zeros((1, m), dtype=np.int)
+        p = np.zeros((1, m), dtype= np.int)
         # Propagacion hacia adelante
         y_hat, temp = self.propagacion_adelante(dataSet)
         # Convertir probabilidad
         for i in range(0, m):
             p[0, i] = 1 if y_hat[0, i] > 0.5 else 0
-        exactitud = np.mean((p[0, :] == Y[0,]))
-        print("Exactitud: " + str(exactitud))
+        exactitud = np.mean((p[0, :] == Y[0, ]))
+        #print("Exactitud: " + str(exactitud))
         return exactitud
+
 
     def activation_function(self, name, x):
         result = 0
         if name == 'sigmoide':
-            result = 1 / (1 + np.exp(-x))
+            result = 1/(1 + np.exp(-x))
         elif name == 'tanh':
             result = np.tanh(x)
         elif name == 'relu':
             result = np.maximum(0, x)
-
-        # print('name:', name, 'result:', result)
+        
+        #print('name:', name, 'result:', result)
         return result
