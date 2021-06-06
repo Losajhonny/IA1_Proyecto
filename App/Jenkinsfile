@@ -11,7 +11,7 @@ pipeline {
             steps { sh "npm install" }
         }
         stage ("test") {
-            steps { sh "npm run test --watch=false" }
+            steps { sh "npm test --watch=false" }
         }
         stage ("deploy") {
             steps { sh "npm run start" }
