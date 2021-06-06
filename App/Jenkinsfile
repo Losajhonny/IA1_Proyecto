@@ -11,10 +11,10 @@ pipeline {
             steps { sh "npm install" }
         }
         stage ("test") {
-            steps { sh "npm test --watch=false" }
+            steps { sh "npm test" }
         }
         stage ("deploy") {
-            steps { sh "npm run start" }
+            steps { sh "npm start" }
         }
     }
 }
