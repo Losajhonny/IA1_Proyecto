@@ -1,15 +1,20 @@
 pipeline {
-    agent { label "master" }
+    agent any
     tools { nodejs "node16.2.0" }
     stages {
+        stage("Git") {
+            steps {
+                git branch: "master", url: "https://github.com/Losajhonny/IA1_Proyecto.git"
+            }
+        }
         stage ("install") {
             steps { sh "npm install" }
         }
         stage ("test") {
-            steps { sh "ng test" }
+            steps { sh "npm run test --watch=false" }
         }
         stage ("deploy") {
-            steps { sh "hola" }
+            steps { sh "npm run start" }
         }
     }
 }
