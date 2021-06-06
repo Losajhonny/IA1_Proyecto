@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+    tools { nodejs "node" }
+    stages {
+        stage ("build") {
+            steps {
+                dir("Instalar paquetes de node js") {
+                    sh "npm install"
+                }
+            }
+        }
+        stage ("test") {
+            steps {
+                dir("Pruebas unitarias") {
+                    sh "npm test"
+                }
+            }
+        }
+        
+    }
+}
