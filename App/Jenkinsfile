@@ -2,14 +2,14 @@ pipeline {
     agent any
     tools { nodejs "node16.2.0" }
     stages {
-        stage ("build") {
+        stage ("install") {
             steps { sh "npm install" }
         }
         stage ("test") {
-            steps { sh "npm test" }
+            steps { sh "npm run test --watch=false" }
         }
         stage ("deploy") {
-            steps { sh "npm start" }
+            steps { sh "npm run start" }
         }
     }
 }
