@@ -8,8 +8,10 @@ pipeline {
             }
         }
         stage ("install") {
-            dir ("App") {
-                steps { sh "npm install" }
+            steps {
+                dir ("App") {
+                    sh "npm install"
+                }
             }
         }
         stage ("test") {
