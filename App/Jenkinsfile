@@ -6,10 +6,10 @@ pipeline {
             steps { sh "npm install" }
         }
         stage ("test") {
-            steps { sh "npm run test --watch=false" }
+            steps { sh "npm run" }
         }
         stage ("deploy") {
-            steps { sh "npm run start" }
+            steps { sh "hola" }
         }
     }
 }
