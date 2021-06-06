@@ -2,7 +2,7 @@ import scipy.io
 import pandas as pd
 
 def get_dataFile():
-    data = scipy.io.loadmat('Server/datasets/data.mat')
+    data = scipy.io.loadmat('datasets/data.mat')
 
     #print(data['X'].T)
     
@@ -20,13 +20,13 @@ def read_csv(path, sep=','):
     return pd.read_csv(path, sep=sep)
 
 def getHiperParametros():        
-    hiperparametros = read_csv("Server/Resource/HiperParametros.csv", ';')
+    hiperparametros = read_csv("Resource/HiperParametros.csv", ';')
     return hiperparametros
 
 def getDataSet():
-    dataset = read_csv("Server/Resource/Dataset.csv")
+    dataset = read_csv("Resource/Dataset.csv")
     return dataset
 
 def getMunicipios():
-    municipios = read_csv("Server/Resource/Municipios.csv")
+    municipios = read_csv("Resource/Municipios.csv")
     return municipios
