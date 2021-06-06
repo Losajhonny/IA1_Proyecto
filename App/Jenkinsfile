@@ -9,7 +9,7 @@ pipeline {
         }
         stage ("test") {
             steps {
-                sh "ng test"
+                sh "npm test"
             }
         }
     }
