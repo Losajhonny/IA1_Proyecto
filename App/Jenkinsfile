@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label "master" }
     tools { nodejs "node16.2.0" }
     stages {
         stage ("install") {
