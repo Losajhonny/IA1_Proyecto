@@ -3,25 +3,13 @@ pipeline {
     tools { nodejs "node16.2.0" }
     stages {
         stage ("build") {
-            steps {
-                dir ("App") {
-                    sh "npm install"
-                }
-            }
+            steps { sh "npm install" }
         }
         stage ("test") {
-            steps {
-                dir ("App") {
-                    sh "npm test"
-                }
-            }
+            steps { sh "npm test" }
         }
         stage ("deploy") {
-            steps {
-                dir ("App") {
-                    sh "npm start"
-                }
-            }
+            steps { sh "npm start" }
         }
     }
 }
