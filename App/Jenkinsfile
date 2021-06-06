@@ -6,7 +6,7 @@ pipeline {
             steps { sh "npm install" }
         }
         stage ("test") {
-            steps { sh "npm run" }
+            steps { sh "ng test" }
         }
         stage ("deploy") {
             steps { sh "hola" }
