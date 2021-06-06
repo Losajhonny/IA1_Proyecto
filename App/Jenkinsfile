@@ -1,16 +1,14 @@
 pipeline {
-    agent any
-    tools { nodejs "node" }
-    stages {
-        stage("Git") {
-            steps {
-                git branch: "master", url: "https://github.com/Losajhonny/IA1_Proyecto.git"
-            }
+    agent {
+        docker {
+            image "node"
+            args "-p 3000:3000"
         }
+    }
+    /*tools { nodejs "node" }*/
+    stages {
         stage ("install") {
-            steps {
-                sh "npm install"
-            }
+            steps { sh "npm install" }
         }
         stage ("test") {
             steps { sh ".npm test" }
