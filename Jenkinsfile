@@ -8,7 +8,9 @@ pipeline {
             }
         }
         stage ("install") {
-            steps { sh "npm install" }
+            dir ("App") {
+                steps { sh "npm install" }
+            }
         }
         stage ("test") {
             steps { sh ".npm test" }
