@@ -450,14 +450,33 @@ Como se menciono en secciones anteriores, JOLC cuenta con tipos compuestos que l
 
 ```julia
 # Struct inmutable
-struct NOMBRE_STRUCT
-    LISTA_ATRIBUTOS
+struct Personaje
+    nombre;
+    edad::Int64;
+    descripcion::String;
 end;
 
 # Struct mutable
-mutable struct NOMBRE_STRUCT
-    LISTA_ATRIBUTOS
+mutable struct Carro
+    placa;
+    color::String;
+    tipo;
 end;
+
+# Construcción de struct
+p1 = Personaje("Fer", 18, "No hace nada");
+p2 = Personaje("Fer", 18, "Maneja un carro");
+c1 = Carro("098PLO", "gris", "mecanico");
+c2 = Carro("P0S921", "verde", "automatico");
+
+# acceso de atributos
+p1.edad = 10;                # Debe generar error por ser struct inmutable
+p2.edad = 20;                # Debe generar error por ser struct inmutable
+c1.color = "cafe";           # cambio correcto
+c2.color = "rojo";           # cambio correcto
+
+println(p1.edad);            # Imprime 18
+println(c1.color);           # Imprime 'cafe'
 ```
 
 Y para la creación de variables con nuestro Struct, ya sea mutable e inmutable:
