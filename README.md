@@ -326,6 +326,33 @@ else
 end;
 ```
 
+```julia
+# Instruccion if
+if x == 8
+    var1 = (x + 8)::Int64;
+    println(sqrt(var1));
+end;
+
+# Instrucciones if, elseif, else
+if x == 8
+    var1 = (x + 8)::Int64;
+    println(sqrt(var1));
+elseif x < 8
+    var1 = (x/3)::Float64;
+    println(sin(var1));
+else
+    println("Error");
+end;
+
+# Instrucciones if y else
+if x == 10
+    var2 = (x + 10)::Int64;
+    println(sqrt(var2));
+else
+    println(sqrt(x+8));
+end;
+```
+
 ### Loops <a name="loops"></a>
 
 JOLC cuenta con sentencias iterativas, lo que permite ejecutar repetidamente un bloque de sentencias. Existen 2 de estas, el ciclo `while` y el ciclo `for`.
