@@ -413,6 +413,35 @@ Hay que tomar en cuenta en los arreglos que también puede ser un rango de algú
 for it in a[begin:end]
     # Haz algo
 end;
+
+# Ejemplo break
+while true
+    print(true);            # Imprime solamente una vez true
+    break;
+end;
+
+# Ejemplo continue
+num = 0;
+while num < 10
+    num = num + 1;
+    if num == 5
+        continue;
+    end;
+    print(num);             # Imprime 1234678910
+end;
+
+# Ejemplo de return
+function funcion()
+    num = 0;
+    while num < 10
+        num = num + 1;
+        if num == 5
+            return 5;
+        end;
+        print(num);
+    end;
+    return 0;
+end;
 ```
 
 Dentro de los ciclos también existen las sentencias de control `break` y `continue`. Las cuales, una termina el bucle y la otra regresa al inicio del bucle ignorando las sentencias faltantes.
